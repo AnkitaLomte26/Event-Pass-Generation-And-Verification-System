@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Events - Event Pass System</title>
+    <link rel="stylesheet" href="/home.css">
+</head>
+<body>
+
+<!-- Navbar -->
+<div class="navbar">
+    <div class="logo">Event Pass System</div>
+    <div class="nav-links">
+        <a href="/">Home</a>
+        <a href="/register">Register</a>
+        <a href="/adminLogin">Admin Login</a>
+    </div>
+</div>
+
+<!-- Events Section -->
+<section class="events-section">
+    <h2>Upcoming Events</h2>
+    <div class="events-container">
+
+        <!-- Loop through events -->
+        <div th:each="event : ${events}" th:classappend="${!event.unlocked} ? 'locked'" class="event-card">
+            <h3 th:text="${event.eventName}">Event Name</h3>
+            <p>Status: 
+                <span th:if="${event.unlocked}" style="color: green;">Unlocked ✅</span>
+                <span th:unless="${event.unlocked}" style="color: red;">Locked 🔒</span>
+            </p>
+            
+            <!-- Show View Details Button only if unlocked -->
+            <a th:if="${event.unlocked}" th:href="@{/eventDetails/{id}(id=${event.id})}" class="details-btn">View Details</a>
+
+            <!-- Otherwise disable button -->
+            <button th:unless="${event.unlocked}" class="details-btn" disabled>Locked</button>
+        </div>
+
+    </div>
+</section>
+
+<!-- Footer -->
+<footer>
+    © 2025 Event Pass System. All rights reserved.
+</footer>
+
+</body>
+</html>
