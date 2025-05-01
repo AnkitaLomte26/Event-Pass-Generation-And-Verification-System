@@ -1,0 +1,176 @@
+package com.eventregistration.controller;
+
+import com.eventregistration.dto.RegistrationRequest;
+import com.eventregistration.model.Event;
+import com.eventregistration.model.Registration;
+import com.eventregistration.service.EventService;
+import com.eventregistration.service.RegistrationService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
+
+@RestController
+@RequestMapping("/api")
+public class RestApiController {
+
+    private final EventService eventService;
+    private final RegistrationService registrationService;
+
+    @Autowired
+    public RestApiController(EventService eventService, RegistrationService registrationService) {
+        this.eventService = eventService;
+        this.registrationService = registrationService;
+    }
+
+    // === Event Endpoints ===
+    
+    @GetMapping("/events")
+    public ResponseEntity<List<Event>> getAllEvents() {
+        return ResponseEntity.ok(eventService.getAllEvents());
+    }
+
+    @GetMapping("/events/{id}")
+    public ResponseEntity<Event> getEventById(@PathVariable Integer id) {
+        Optional<Event> eventOpt = eventService.getEventById(id);
+        return eventOpt.map(ResponseEntity::ok)
+                .orElseGet(() -> ResponseEntity.notFound().build());
+    }
+
+    @GetMapping("/events/unlocked")
+    public ResponseEntity<List<Event>> getUnlockedEvents() {
+        return ResponseEntity.ok(eventService.getUnlockedEvents());
+    }
+
+    @GetMapping("/events/locked")
+    public ResponseEntity<List<Event>> getLockedEvents() {
+        return ResponseEntity.ok(eventService.getLockedEvents());
+    }
+
+    @PostMapping("/events")
+    public ResponseEntity<Event> createEvent(@RequestBody Event event) {
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body(eventService.createEvent(event));
+    }
+
+    @PutMapping("/events/{id}")
+    public ResponseEntity<Event> updateEvent(@PathVariable Integer id, @RequestBody Event event) {
+        if (!eventService.getEventById(id).isPresent()) {
+            return ResponseEntity.notFound().build();
+        }
+        event.setId(id);
+        return ResponseEntity.ok(eventService.updateEvent(event));
+    }
+
+    @DeleteMapping("/events/{id}")
+    public ResponseEntity<Void> deleteEvent(@PathVariable Integer id) {
+        if (!eventService.getEventById(id).isPresent()) {
+            return ResponseEntity.notFound().build();
+        }
+        eventService.deleteEvent(id);
+        return ResponseEntity.noContent().build();
+    }
+
+    // === Registration Endpoints ===
+    
+    @GetMapping("/registrations")
+    public ResponseEntity<List<Registration>> getAllRegistrations() {
+        return ResponseEntity.ok(registrationService.getAllRegistrations());
+    }
+
+    @GetMapping("/registrations/{id}")
+    public ResponseEntity<Registration> getRegistrationById(@PathVariable Integer id) {
+        Optional<Registration> registrationOpt = registrationService.getRegistrationById(id);
+        return registrationOpt.map(ResponseEntity::ok)
+                .orElseGet(() -> ResponseEntity.notFound().build());
+    }
+
+    @GetMapping("/events/{eventId}/registrations")
+    public ResponseEntity<List<Registration>> getRegistrationsByEventId(@PathVariable Integer eventId) {
+        if (!eventService.getEventById(eventId).isPresent()) {
+            return ResponseEntity.notFound().build();
+        }
+        return ResponseEntity.ok(registrationService.getRegistrationsByEventId(eventId));
+    }
+
+    @PostMapping("/registrations")
+    public ResponseEntity<?> createRegistration(
+            @RequestPart("registration") RegistrationRequest registrationRequest,
+            @RequestPart(value = "paymentProof", required = false) MultipartFile paymentProofFile) {
+        
+        // Check if event exists
+        Optional<Event> eventOpt = eventService.getEventById(registrationRequest.getEventId());
+        if (eventOpt.isEmpty()) {
+            return ResponseEntity.badRequest().body("Event not found");
+        }
+        
+        Event event = eventOpt.get();
+        
+        // Check if event is unlocked
+        if (!"Unlocked".equals(event.getStatus())) {
+            return ResponseEntity.badRequest().body("Event registration is closed");
+        }
+        
+        try {
+            // Process payment proof file if provided
+            String paymentProofFileName = null;
+            if (paymentProofFile != null && !paymentProofFile.isEmpty()) {
+                // Create uploads directory if it doesn't exist
+                Path uploadsDir = Paths.get("uploads");
+                if (!Files.exists(uploadsDir)) {
+                    Files.createDirectories(uploadsDir);
+                }
+                
+                // Generate a unique filename
+                paymentProofFileName = UUID.randomUUID().toString() + "_" + 
+                                      paymentProofFile.getOriginalFilename();
+                Path filePath = uploadsDir.resolve(paymentProofFileName);
+                
+                // Save the file
+                Files.copy(paymentProofFile.getInputStream(), filePath);
+            }
+            
+            // Create registration
+            Registration registration = new Registration();
+            registration.setEventId(registrationRequest.getEventId());
+            registration.setUsername(registrationRequest.getUsername());
+            registration.setEmail(registrationRequest.getEmail());
+            registration.setMobile(registrationRequest.getMobile());
+            registration.setCollege(registrationRequest.getCollege());
+            registration.setDepartment(registrationRequest.getDepartment());
+            registration.setYear(registrationRequest.getYear());
+            registration.setPaymentOption(registrationRequest.getPaymentOption());
+            registration.setPaymentProof(paymentProofFileName);
+            
+            // Save registration
+            Registration savedRegistration = registrationService.createRegistration(registration);
+            
+            return ResponseEntity.status(HttpStatus.CREATED).body(savedRegistration);
+            
+        } catch (IOException e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("Failed to upload payment proof: " + e.getMessage());
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("Failed to create registration: " + e.getMessage());
+        }
+    }
+
+    @DeleteMapping("/registrations/{id}")
+    public ResponseEntity<Void> deleteRegistration(@PathVariable Integer id) {
+        if (!registrationService.getRegistrationById(id).isPresent()) {
+            return ResponseEntity.notFound().build();
+        }
+        registrationService.deleteRegistration(id);
+        return ResponseEntity.noContent().build();
+    }
+}

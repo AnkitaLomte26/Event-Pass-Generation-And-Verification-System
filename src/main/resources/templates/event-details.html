@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Event Details | Event Registration System</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+    <header>
+        <div class="container">
+            <h1>Event Details</h1>
+            <p>View complete information about the event</p>
+        </div>
+    </header>
+
+    <main class="container">
+        <div class="event-details">
+            <div class="event-header" th:classappend="${event.status == 'Locked'} ? 'locked' : ''">
+                <h2 th:text="${event.title}">Event Title</h2>
+                <span class="badge" th:text="${event.status}">Status</span>
+            </div>
+            
+            <div class="event-image-container">
+                <img th:src="@{${event.image}}" alt="Event Image">
+                <div class="event-date-time">
+                    <p><i class="icon-calendar"></i> <span th:text="${event.date}">June 20, 2025</span></p>
+                    <p><i class="icon-clock"></i> <span th:text="${event.time}">10:00 AM - 4:00 PM</span></p>
+                </div>
+            </div>
+            
+            <div class="event-info-grid">
+                <div class="event-info-item">
+                    <h3>Location</h3>
+                    <p th:text="${event.location}">Event Location</p>
+                </div>
+                
+                <div class="event-info-item">
+                    <h3>Organizer</h3>
+                    <p th:text="${event.organizer}">Event Organizer</p>
+                </div>
+                
+                <div class="event-info-item">
+                    <h3>Registration Fee</h3>
+                    <p th:text="${event.fee}">Registration Fee</p>
+                </div>
+            </div>
+            
+            <div class="event-description">
+                <h3>About this Event</h3>
+                <p th:text="${event.description}">Event Description</p>
+            </div>
+            
+            <div class="event-sections">
+                <!-- Only display if learnings exist -->
+                <div class="event-section" th:if="${event.learnings != null and !event.learnings.isEmpty()}">
+                    <h3>What You'll Learn</h3>
+                    <ul>
+                        <li th:each="learning : ${event.learnings}" th:text="${learning}">Learning point</li>
+                    </ul>
+                </div>
+                
+                <!-- Only display if highlights exist -->
+                <div class="event-section" th:if="${event.highlights != null and !event.highlights.isEmpty()}">
+                    <h3>Event Highlights</h3>
+                    <ul>
+                        <li th:each="highlight : ${event.highlights}" th:text="${highlight}">Highlight point</li>
+                    </ul>
+                </div>
+                
+                <!-- Only display if schedule exists -->
+                <div class="event-section" th:if="${event.schedule != null and !event.schedule.isEmpty()}">
+                    <h3>Event Schedule</h3>
+                    <div class="schedule-item" th:each="scheduleItem : ${event.schedule}">
+                        <div class="schedule-time" th:text="${scheduleItem.time}">10:00 AM</div>
+                        <div class="schedule-title" th:text="${scheduleItem.title}">Activity Title</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="event-actions">
+                <a th:href="@{/}" class="btn-secondary">Back to Events</a>
+                
+                <!-- Match the controller mapping for registration form -->
+                <a th:if="${event.status == 'Unlocked'}" 
+                   th:href="@{/register/{id}(id=${event.id})}" 
+                   class="btn-primary">Register Now</a>
+                   
+                <button th:if="${event.status == 'Locked'}" 
+                        class="btn-disabled" 
+                        disabled>Registration Locked</button>
+            </div>
+        </div>
+    </main>
+
+    <footer>
+        <div class="container">
+            <p>&copy; 2025 Event Registration System. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script th:src="@{/js/script.js}"></script>
+</body>
+</html>

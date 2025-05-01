@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Event Registration System</title>
+    <link rel="stylesheet" th:href="@{/static/css/style.css}">
+</head>
+<body>
+    <header>
+        <div class="container">
+            <h1>Event Registration System</h1>
+            <p>Discover, Register, and Participate in Amazing Events</p>
+        </div>
+    </header>
+
+    <main class="container">
+        <section class="events">
+            <h2>Upcoming Events</h2>
+            <div class="event-grid">
+                <!-- Event Cards -->
+                <div class="event-card" th:each="event : ${events}">
+                    <div class="event-header" th:classappend="${event.status == 'Locked'} ? 'locked' : ''">
+                        <h3 th:text="${event.title}">Event Title</h3>
+                        <span class="badge" th:text="${event.status}">Status</span>
+                    </div>
+                    <div class="event-body">
+                        <div class="event-image">
+                            <img th:src="@{${event.image}}" alt="Event Image">
+                            <div class="event-date-time">
+                                <p><i class="icon-calendar"></i> <span th:text="${event.date}">June 20, 2025</span></p>
+                                <p><i class="icon-clock"></i> <span th:text="${event.time}">10:00 AM - 4:00 PM</span></p>
+                            </div>
+                        </div>
+                        <div class="event-info">
+                            <p><i class="icon-location"></i> <span th:text="${event.location}">Location</span></p>
+                            <p><i class="icon-organization"></i> <span th:text="${event.organizer}">Organizer</span></p>
+                            <p><i class="icon-fee"></i> <span th:text="${event.fee}">Fee</span></p>
+                        </div>
+                        <p class="event-description" th:text="${event.description}">Description</p>
+                        <div class="event-actions">
+                            <!-- In your loop that displays events -->
+                    <a th:href="@{/event-details/{id}(id=${event.id})}" class="btn-primary">View Details</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <div class="container">
+            <p>&copy; 2025 Event Registration System. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script th:src="@{/js/script.js}"></script>
+</body>
+</html>
