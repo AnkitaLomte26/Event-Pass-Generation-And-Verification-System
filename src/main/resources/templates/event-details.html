@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Event Details | Event Registration System</title>
-    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <link rel="stylesheet" th:href="@{/static/css/style.css}">
 </head>
 <body>
     <header>
@@ -18,7 +18,7 @@
         <div class="event-details">
             <div class="event-header" th:classappend="${event.status == 'Locked'} ? 'locked' : ''">
                 <h2 th:text="${event.title}">Event Title</h2>
-                <span class="badge" th:text="${event.status}">Status</span>
+                <span class="badge" th:text="${event.status}" th:classappend="${event.status == 'Locked'} ? 'badge-locked' : 'badge-unlocked'">Status</span>
             </div>
             
             <div class="event-image-container">
@@ -72,23 +72,24 @@
                 <div class="event-section" th:if="${event.schedule != null and !event.schedule.isEmpty()}">
                     <h3>Event Schedule</h3>
                     <div class="schedule-item" th:each="scheduleItem : ${event.schedule}">
-                        <div class="schedule-time" th:text="${scheduleItem.time}">10:00 AM</div>
-                        <div class="schedule-title" th:text="${scheduleItem.title}">Activity Title</div>
+                        <div class="schedule-time" th:text="${scheduleItem.split(' - ')[0]}">10:00 AM</div>
+                        <div class="schedule-title" th:text="${scheduleItem.substring(scheduleItem.indexOf(' - ') + 3)}">Activity Title</div>
                     </div>
                 </div>
             </div>
             
             <div class="event-actions">
-                <a th:href="@{/}" class="btn-secondary">Back to Events</a>
+                <!-- Show register button only if event is unlocked -->
+                <a th:if="${event.status == 'Unlocked'}" th:href="@{/register/{id}(id=${event.id})}" class="btn btn-primary">Register Now</a>
                 
-                <!-- Match the controller mapping for registration form -->
-                <a th:if="${event.status == 'Unlocked'}" 
-                   th:href="@{/register/{id}(id=${event.id})}" 
-                   class="btn-primary">Register Now</a>
-                   
-                <button th:if="${event.status == 'Locked'}" 
-                        class="btn-disabled" 
-                        disabled>Registration Locked</button>
+                <!-- Show locked message if event is locked -->
+                <div th:if="${event.status == 'Locked'}" class="locked-event-message">
+                    <p>This event is currently locked for registration.</p>
+                    <div class="locked-event-countdown" data-unlock-date="2025-06-01T00:00:00"></div>
+                </div>
+                
+                <!-- Back to events button -->
+                <a href="/" class="btn btn-secondary">Back to Events</a>
             </div>
         </div>
     </main>
@@ -99,6 +100,6 @@
         </div>
     </footer>
 
-    <script th:src="@{/js/script.js}"></script>
+    <script th:src="@{/static/js/script.js}"></script>
 </body>
 </html>

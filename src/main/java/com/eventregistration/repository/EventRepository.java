@@ -7,6 +7,4 @@ import com.eventregistration.model.Event;
 
 @Repository
 public interface EventRepository extends JpaRepository<Event, Integer> {
-    // Spring Data JPA will automatically implement basic CRUD operations
-    // Custom queries can be added here if needed
 }

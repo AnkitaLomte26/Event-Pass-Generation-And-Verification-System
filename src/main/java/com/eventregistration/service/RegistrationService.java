@@ -1,10 +1,10 @@
 package com.eventregistration.service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
-import java.util.Random;
+import java.util.UUID;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.eventregistration.model.Registration;
@@ -14,20 +14,15 @@ import com.eventregistration.repository.RegistrationRepository;
 public class RegistrationService {
     
     private final RegistrationRepository registrationRepository;
-    private final EventService eventService;
     
-    @Autowired
-    public RegistrationService(RegistrationRepository registrationRepository, EventService eventService) {
+    public RegistrationService(RegistrationRepository registrationRepository) {
         this.registrationRepository = registrationRepository;
-        this.eventService = eventService;
     }
     
     // Create a new registration
     public Registration createRegistration(Registration registration) {
-        // Check if the event exists and is unlocked
-        if (!eventService.isEventUnlocked(registration.getEventId())) {
-            throw new IllegalArgumentException("Event is locked or doesn't exist");
-        }
+        // Set creation timestamp
+        registration.setTimestamp(LocalDateTime.now());
         
         // Generate a unique registration ID if not provided
         if (registration.getRegistrationId() == null || registration.getRegistrationId().isEmpty()) {
@@ -37,9 +32,9 @@ public class RegistrationService {
         return registrationRepository.save(registration);
     }
     
-    // Get all registrations for an event
-    public List<Registration> getRegistrationsByEventId(Integer eventId) {
-        return registrationRepository.findByEventId(eventId);
+    // Generate a unique registration ID
+    private String generateRegistrationId() {
+        return "REG-" + UUID.randomUUID().toString().substring(0, 8).toUpperCase();
     }
     
     // Get registration by ID
@@ -47,14 +42,13 @@ public class RegistrationService {
         return registrationRepository.findById(id);
     }
     
-    // Get registration by registration ID
-    public Registration getRegistrationByRegistrationId(String registrationId) {
-        return registrationRepository.findByRegistrationId(registrationId);
+    // Get registrations by event ID
+    public List<Registration> getRegistrationsByEventId(Integer eventId) {
+        return registrationRepository.findByEventId(eventId);
     }
     
-    // Generate a unique registration ID (4-digit number)
-    private String generateRegistrationId() {
-        Random random = new Random();
-        return String.format("%04d", 1000 + random.nextInt(9000)); // 4-digit number between 1000-9999
+    // Delete a registration
+    public void deleteRegistration(Integer id) {
+        registrationRepository.deleteById(id);
     }
 }

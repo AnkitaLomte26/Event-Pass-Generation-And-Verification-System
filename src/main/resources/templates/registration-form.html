@@ -1,175 +1,118 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Register for Event - Event Registration System</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+    <title>Registration Form | Event Registration System</title>
+    <link rel="stylesheet" th:href="@{/static/css/style.css}">
 </head>
 <body>
-    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+    <header>
         <div class="container">
-            <a class="navbar-brand" href="/">Event Registration System</a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav ms-auto">
-                    <li class="nav-item">
-                        <a class="nav-link" href="/">Home</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="#">About</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="#">Contact</a>
-                    </li>
-                </ul>
-            </div>
+            <h1>Event Registration</h1>
+            <p>Complete the form to register for the event</p>
         </div>
-    </nav>
+    </header>
 
-    <div class="container my-5">
-        <div class="row">
-            <div class="col-lg-8 mx-auto">
-                <div class="card shadow">
-                    <div class="card-header bg-primary text-white">
-                        <h4 class="mb-0">Register for <span th:text="${event.title}">Event</span></h4>
+    <main class="container">
+        <div class="registration-form">
+            <div class="form-header">
+                <h2 th:text="${event.title}">Event Title</h2>
+                <p><span th:text="${event.date}">Date</span> | <span th:text="${event.time}">Time</span> | <span th:text="${event.location}">Location</span></p>
+                <p class="form-text">Fields marked with * are required</p>
+            </div>
+            
+            <!-- Display error message if any -->
+            <div class="error-alert" th:if="${error != null}">
+                <p th:text="${error}">Error Message</p>
+            </div>
+            
+            <form id="registration-form" th:action="@{/register}" method="post" th:object="${registrationRequest}" enctype="multipart/form-data">
+                <!-- Hidden field for event ID -->
+                <input type="hidden" name="eventId" th:value="${event.id}" />
+                
+                <div class="form-group">
+                    <label for="username" class="form-label">Full Name *</label>
+                    <input type="text" id="username" class="form-control" th:field="*{username}" required />
+                </div>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="email" class="form-label">Email ID *</label>
+                        <input type="email" id="email" class="form-control" th:field="*{email}" required />
                     </div>
-                    <div class="card-body">
-                        <form th:action="@{/register}" method="post" enctype="multipart/form-data" th:object="${registrationRequest}">
-                            <input type="hidden" th:field="*{eventId}" th:value="${event.id}">
-                            
-                            <div class="alert alert-info mb-4">
-                                <div class="d-flex">
-                                    <div>
-                                        <i class="bi bi-info-circle-fill fs-4 me-2"></i>
-                                    </div>
-                                    <div>
-                                        <strong>Event Details:</strong> <span th:text="${event.title}">Event Title</span><br>
-                                        <strong>Date:</strong> <span th:text="${event.date}">Event Date</span><br>
-                                        <strong>Time:</strong> <span th:text="${event.time}">Event Time</span><br>
-                                        <strong>Fee:</strong> <span th:text="${event.fee}">Event Fee</span>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="mb-3">
-                                <label for="username" class="form-label">Full Name *</label>
-                                <input type="text" class="form-control" id="username" th:field="*{username}" required>
-                                <div class="text-danger" th:if="${#fields.hasErrors('username')}" th:errors="*{username}"></div>
-                            </div>
-
-                            <div class="mb-3">
-                                <label for="email" class="form-label">Email ID *</label>
-                                <input type="email" class="form-control" id="email" th:field="*{email}" required>
-                                <div class="text-danger" th:if="${#fields.hasErrors('email')}" th:errors="*{email}"></div>
-                            </div>
-
-                            <div class="mb-3">
-                                <label for="mobile" class="form-label">Mobile Number *</label>
-                                <input type="tel" class="form-control" id="mobile" th:field="*{mobile}" required>
-                                <div class="text-danger" th:if="${#fields.hasErrors('mobile')}" th:errors="*{mobile}"></div>
-                            </div>
-
-                            <div class="mb-3">
-                                <label for="college" class="form-label">College Name *</label>
-                                <input type="text" class="form-control" id="college" th:field="*{college}" required>
-                                <div class="text-danger" th:if="${#fields.hasErrors('college')}" th:errors="*{college}"></div>
-                            </div>
-
-                            <div class="row mb-3">
-                                <div class="col-md-6">
-                                    <label for="department" class="form-label">Department *</label>
-                                    <select class="form-select" id="department" th:field="*{department}" required>
-                                        <option value="">Select Department</option>
-                                        <option value="Computer Science">Computer Science</option>
-                                        <option value="Electrical Engineering">Electrical Engineering</option>
-                                        <option value="Mechanical Engineering">Mechanical Engineering</option>
-                                        <option value="Civil Engineering">Civil Engineering</option>
-                                        <option value="Business Administration">Business Administration</option>
-                                        <option value="Arts & Humanities">Arts & Humanities</option>
-                                        <option value="Sciences">Sciences</option>
-                                    </select>
-                                    <div class="text-danger" th:if="${#fields.hasErrors('department')}" th:errors="*{department}"></div>
-                                </div>
-                                <div class="col-md-6">
-                                    <label for="year" class="form-label">Year *</label>
-                                    <select class="form-select" id="year" th:field="*{year}" required>
-                                        <option value="">Select Year</option>
-                                        <option value="1">First Year</option>
-                                        <option value="2">Second Year</option>
-                                        <option value="3">Third Year</option>
-                                        <option value="4">Fourth Year</option>
-                                        <option value="5">Fifth Year</option>
-                                    </select>
-                                    <div class="text-danger" th:if="${#fields.hasErrors('year')}" th:errors="*{year}"></div>
-                                </div>
-                            </div>
-
-                            <div class="mb-3">
-                                <label class="form-label d-block">Payment Option *</label>
-                                <div class="form-check form-check-inline">
-                                    <input class="form-check-input" type="radio" name="paymentOption" id="upi" value="upi" th:field="*{paymentOption}" checked>
-                                    <label class="form-check-label" for="upi">UPI Payment (Google Pay/PhonePe/BHIM)</label>
-                                </div>
-                                <div class="form-check form-check-inline">
-                                    <input class="form-check-input" type="radio" name="paymentOption" id="bank" value="bank" th:field="*{paymentOption}">
-                                    <label class="form-check-label" for="bank">Bank Transfer (NEFT/IMPS)</label>
-                                </div>
-                                <div class="form-check form-check-inline">
-                                    <input class="form-check-input" type="radio" name="paymentOption" id="cash" value="cash" th:field="*{paymentOption}">
-                                    <label class="form-check-label" for="cash">Cash Payment (At Registration Desk)</label>
-                                </div>
-                                <div class="text-danger" th:if="${#fields.hasErrors('paymentOption')}" th:errors="*{paymentOption}"></div>
-                            </div>
-
-                            <div class="mb-4 p-3 bg-light rounded">
-                                <div class="d-flex mb-3">
-                                    <i class="bi bi-info-circle-fill text-primary me-2"></i>
-                                    <p class="mb-0">Please make the payment to the following details and upload a screenshot as proof:</p>
-                                </div>
-                                <div class="mb-3">
-                                    <p class="mb-1"><strong>Amount:</strong> <span th:text="${event.fee}">Fee</span></p>
-                                    <p class="mb-1"><strong>UPI ID:</strong> events@university</p>
-                                    <p class="mb-0"><strong>Account Details:</strong> University Events, XXXX1234, IFSC: ABCD0001234</p>
-                                </div>
-                                
-                                <div class="mb-3">
-                                    <label for="paymentProofFile" class="form-label">Upload Payment Screenshot *</label>
-                                    <input type="file" class="form-control" id="paymentProofFile" name="paymentProofFile" accept="image/*">
-                                    <small class="text-muted">Required for UPI and Bank Transfer payments</small>
-                                </div>
-                            </div>
-
-                            <div class="mb-4">
-                                <div class="form-check">
-                                    <input class="form-check-input" type="checkbox" id="terms" required>
-                                    <label class="form-check-label" for="terms">
-                                        I agree to the <a href="#" class="text-decoration-none">Terms and Conditions</a> and acknowledge that I have read the <a href="#" class="text-decoration-none">Privacy Policy</a>.
-                                    </label>
-                                </div>
-                            </div>
-
-                            <div class="d-grid">
-                                <button type="submit" class="btn btn-primary py-2">
-                                    <i class="bi bi-check-circle me-2"></i> Complete Registration
-                                </button>
-                            </div>
-                        </form>
+                    
+                    <div class="form-group">
+                        <label for="mobile" class="form-label">Mobile Number *</label>
+                        <input type="tel" id="mobile" class="form-control" th:field="*{mobile}" required />
                     </div>
                 </div>
-            </div>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="department" class="form-label">Department *</label>
+                        <input type="text" id="department" class="form-control" th:field="*{department}" required />
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="year" class="form-label">Year *</label>
+                        <select id="year" class="form-control" th:field="*{year}" required>
+                            <option value="">Select Year</option>
+                            <option value="1st Year">1st Year</option>
+                            <option value="2nd Year">2nd Year</option>
+                            <option value="3rd Year">3rd Year</option>
+                            <option value="4th Year">4th Year</option>
+                            <option value="5th Year">5th Year</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="college" class="form-label">College Name *</label>
+                    <input type="text" id="college" class="form-control" th:field="*{college}" required />
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">Payment Option *</label>
+                    <div class="radio-group">
+                        <div class="radio-option">
+                            <input type="radio" id="cash" name="paymentOption" value="cash" th:field="*{paymentOption}" required />
+                            <label for="cash">Cash</label>
+                        </div>
+                        <div class="radio-option">
+                            <input type="radio" id="upi" name="paymentOption" value="upi" th:field="*{paymentOption}" />
+                            <label for="upi">UPI</label>
+                        </div>
+                        <div class="radio-option">
+                            <input type="radio" id="netbanking" name="paymentOption" value="netbanking" th:field="*{paymentOption}" />
+                            <label for="netbanking">Net Banking</label>
+                        </div>
+                    </div>
+                </div>
+                
+                <div id="payment-proof-section" class="form-group" style="display: none;">
+                    <label for="paymentProofFile" class="form-label">Payment Proof *</label>
+                    <div class="file-upload">
+                        <p class="form-text">Please upload a screenshot of your payment</p>
+                        <input type="file" id="paymentProofFile" name="paymentProofFile" class="form-control" accept="image/*" />
+                        <div id="file-preview" class="file-preview"></div>
+                    </div>
+                </div>
+                
+                <div class="form-actions">
+                    <a th:href="@{/events/{id}(id=${event.id})}" class="btn btn-secondary">Cancel</a>
+                    <button type="submit" class="btn btn-primary">Register</button>
+                </div>
+            </form>
         </div>
-    </div>
+    </main>
 
-    <footer class="bg-dark text-white py-4 mt-5">
-        <div class="container text-center">
-            <p>© 2025 Event Registration System. All rights reserved.</p>
+    <footer>
+        <div class="container">
+            <p>&copy; 2025 Event Registration System. All rights reserved.</p>
         </div>
     </footer>
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script th:src="@{/static/js/script.js}"></script>
 </body>
 </html>

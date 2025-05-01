@@ -21,7 +21,7 @@ public class EventService {
         return eventRepository.findAll();
     }
     
-    // Get event by ID - Updated to return Event directly instead of Optional
+    // Get event by ID
     public Event getEventById(Integer id) {
         return eventRepository.findById(id).orElse(null);
     }

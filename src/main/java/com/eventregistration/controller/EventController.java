@@ -28,8 +28,11 @@ public class EventController {
         return "event-list";
     }
     
-    @GetMapping("/{id}")
-    public String viewEvent(@PathVariable Integer id, Model model) {
+// In EventController.java
+@GetMapping("/api/events/{id}")  // Changed from "/events/{id}" to "/api/events/{id}"
+public String viewEvent(@PathVariable Integer id, Model model) {
+    // Your existing code
+
         // Get the event by ID
         Event event = eventService.getEventById(id);
         

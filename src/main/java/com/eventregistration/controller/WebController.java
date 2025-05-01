@@ -17,7 +17,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.eventregistration.dto.RegistrationRequest;
 import com.eventregistration.model.Event;
@@ -45,7 +44,6 @@ public class WebController {
         return "index";
     }
 
-    // Keep original mapping
     @GetMapping("/events/{id}")
     public String eventDetails(@PathVariable Integer id, Model model) {
         Event event = eventService.getEventById(id);
@@ -58,20 +56,11 @@ public class WebController {
         return "event-details";
     }
     
-    // Add alternative mapping for event-details
     @GetMapping("/event-details/{id}")
     public String eventDetailsAlternate(@PathVariable Integer id, Model model) {
-        Event event = eventService.getEventById(id);
-        
-        if (event == null) {
-            return "redirect:/";
-        }
-        
-        model.addAttribute("event", event);
-        return "event-details";
+        return eventDetails(id, model);
     }
 
-    // Keep original mapping
     @GetMapping("/register/{eventId}")
     public String showRegistrationForm(@PathVariable Integer eventId, Model model) {
         Event event = eventService.getEventById(eventId);
@@ -82,7 +71,6 @@ public class WebController {
         
         // Check if the event is unlocked
         if (!"Unlocked".equals(event.getStatus())) {
-            // Redirect with a flash message
             return "redirect:/events/" + eventId;
         }
         
@@ -91,24 +79,9 @@ public class WebController {
         return "registration-form";
     }
     
-    // Add alternative mapping for registration-form
     @GetMapping("/registration-form/{id}")
     public String registrationFormAlternate(@PathVariable Integer id, Model model) {
-        Event event = eventService.getEventById(id);
-        
-        if (event == null) {
-            return "redirect:/";
-        }
-        
-        // Check if the event is unlocked
-        if (!"Unlocked".equals(event.getStatus())) {
-            // Redirect with a flash message
-            return "redirect:/events/" + id;
-        }
-        
-        model.addAttribute("event", event);
-        model.addAttribute("registrationRequest", new RegistrationRequest());
-        return "registration-form";
+        return showRegistrationForm(id, model);
     }
 
     @PostMapping("/register")
@@ -116,8 +89,7 @@ public class WebController {
             @Valid @ModelAttribute("registrationRequest") RegistrationRequest registrationRequest,
             BindingResult bindingResult,
             @RequestParam("paymentProofFile") MultipartFile paymentProofFile,
-            Model model,
-            RedirectAttributes redirectAttributes) {
+            Model model) {
         
         // Get the event
         Event event = eventService.getEventById(registrationRequest.getEventId());
@@ -180,10 +152,6 @@ public class WebController {
         } catch (IOException e) {
             // Handle file upload error
             model.addAttribute("error", "Failed to upload payment proof: " + e.getMessage());
-            return "registration-form";
-        } catch (IllegalArgumentException e) {
-            // Handle validation error
-            model.addAttribute("error", e.getMessage());
             return "registration-form";
         }
     }
