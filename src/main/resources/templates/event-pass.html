@@ -5,6 +5,23 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Event Pass | Event Registration System</title>
     <link rel="stylesheet" th:href="@{/static/css/style.css}">
+    <!-- Add QR Code Generator Library -->
+    <script src="https://cdn.jsdelivr.net/npm/qrcode-generator@1.4.4/qrcode.min.js"></script>
+    <style>
+        .qr-code {
+            display: flex;
+            justify-content: center;
+            margin: 20px 0;
+        }
+
+        .qr-code img {
+            max-width: 200px;
+            height: auto;
+            border: 1px solid #ddd;
+            padding: 10px;
+            background: white;
+        }
+    </style>
 </head>
 <body>
     <header>
@@ -18,14 +35,14 @@
         <div class="event-pass">
             <div class="pass-header">
                 <h2>Event Pass: <span th:text="${event.title}">Event Title</span></h2>
-                <p>Registration ID: <strong th:text="${registration.registrationId}">REG-12345</strong></p>
+                <p>Registration ID: <strong th:text="${registration.id}">REG-12345</strong></p>
             </div>
             
             <div class="pass-content">
                 <div class="pass-qr">
                     <div class="qr-code">
-                        <!-- We'll use a div with text for simplicity; in a real app, generate a QR code -->
-                        <span th:text="${registration.registrationId}">REG-12345</span>
+                        <!-- QR code will be generated here -->
+                        <div id="qrcode"></div>
                     </div>
                     <p>Scan this QR code at the event venue</p>
                 </div>
@@ -101,5 +118,30 @@
     </footer>
 
     <script th:src="@{/static/js/script.js}"></script>
+    
+    <!-- Generate QR Code compatible with Google Lens -->
+    <script th:inline="javascript">
+    /*<![CDATA[*/
+    document.addEventListener('DOMContentLoaded', function() {
+        // Get key information - keep it short for compatibility
+        var registrationId = /*[[${registration.id}]]*/ 'REG-12345';
+        var attendeeName = /*[[${registration.username}]]*/ 'Attendee Name';
+        var eventTitle = /*[[${event.title}]]*/ 'Event Title';
+        var eventDate = /*[[${event.date}]]*/ 'June 20, 2025';
+        
+        // Create a shorter data string that's more likely to be recognized
+        var qrData = "Event: " + eventTitle + " | Attendee: " + attendeeName + 
+                     " | ID: " + registrationId + " | Date: " + eventDate;
+        
+        // Generate QR code with medium error correction for better compatibility
+        var qr = qrcode(0, 'M'); 
+        qr.addData(qrData);
+        qr.make();
+        
+        // Create standard sized QR code
+        document.getElementById('qrcode').innerHTML = qr.createImgTag(3);
+    });
+    /*]]>*/
+    </script>
 </body>
 </html>
