@@ -34,7 +34,8 @@ public class DataInitializer implements CommandLineRunner {
         event1.setLocation("Tech Hub, Main Campus");
         event1.setOrganizer("Computer Science Department");
         event1.setFee("₹500");
-        event1.setImage("/static/images/coding-hackathon.jpg");
+        // Updated to use Unsplash URL
+        event1.setImage("https://images.unsplash.com/photo-1517694712202-14dd9538aa97?auto=format&fit=crop&w=800&q=80");
         event1.setDescription("Join us for an exciting day of coding challenges and innovation. This hackathon is designed for students of all skill levels who want to test their programming abilities and work on creative solutions.");
         
         event1.setLearnings(Arrays.asList(
@@ -72,7 +73,8 @@ public class DataInitializer implements CommandLineRunner {
         event2.setLocation("Innovation Center, East Wing");
         event2.setOrganizer("AI Research Club");
         event2.setFee("₹750");
-        event2.setImage("/static/images/ai-workshop.jpg");
+        // Updated to use Unsplash URL
+        event2.setImage("https://images.unsplash.com/photo-1534723328310-e82dad3ee43f?auto=format&fit=crop&w=800&q=80");
         event2.setDescription("A comprehensive workshop series on Artificial Intelligence fundamentals and applications. Learn about machine learning, neural networks, and how to implement AI solutions for real-world problems.");
         
         event2.setLearnings(Arrays.asList(
@@ -110,7 +112,8 @@ public class DataInitializer implements CommandLineRunner {
         event3.setLocation("Security Conference Hall");
         event3.setOrganizer("Cybersecurity Excellence Center");
         event3.setFee("₹1000");
-        event3.setImage("/static/images/cybersecurity-summit.jpg");
+        // Updated to use Unsplash URL
+        event3.setImage("https://images.unsplash.com/photo-1563013544-824ae1b704d3?auto=format&fit=crop&w=800&q=80");
         event3.setDescription("Learn about the latest threats, defense mechanisms, and best practices in cybersecurity from industry experts and practitioners. This summit covers everything from network security to ethical hacking.");
         
         event3.setLearnings(Arrays.asList(

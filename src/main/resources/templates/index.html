@@ -26,7 +26,9 @@
                     </div>
                     <div class="event-body">
                         <div class="event-image">
-                            <img th:src="@{${event.image}}" alt="Event Image">
+                            <!-- CORRECT FIX FOR YOUR PROJECT -->
+                            <img th:src="${event.image}" alt="Event Image">
+                            
                             <div class="event-date-time">
                                 <p><i class="icon-calendar"></i> <span th:text="${event.date}">June 20, 2025</span></p>
                                 <p><i class="icon-clock"></i> <span th:text="${event.time}">10:00 AM - 4:00 PM</span></p>
