@@ -7,6 +7,7 @@ Live Demo
 The application is deployed and accessible at: https://event-pass-generation-and-verification.onrender.com
 
 ------------------------------------------Features----------------------------------
+
 Event Browsing: Users can view a list of upcoming events with detailed information including dates, times, locations, and descriptions.
 Event Status: Events can be marked as "Locked" or "Unlocked" for registration, with countdown timers for locked events.
 Detailed Event Pages: Each event has a dedicated page showing comprehensive information, schedule, highlights, and what attendees will learn.
@@ -17,6 +18,7 @@ Mobile Responsive: The application is fully responsive and works well on all dev
 
 
 ------------------------------Technology Stack--------------------------------------
+
 Backend: Java with Spring Boot
 Frontend: Thymeleaf, HTML, CSS, JavaScript
 Database: H2 (embedded)
@@ -35,6 +37,7 @@ Home Page
 The home page displays a grid of event cards, each showing a thumbnail image, title, date, time, location, and status. Events can be either "Locked" or "Unlocked" for registration. Locked events display a countdown timer indicating when registration will open.
 
 ------------------------------- Event Details Page -----------------------------------
+
 Clicking on an event card takes users to a detailed page showing:
 
 Event image and title
@@ -60,6 +63,7 @@ Event Pass
 After successful registration, the system generates a digital event pass containing:
 
 -------------------------------------- Event title and registration ID -------------------------------
+
 QR code containing registration information
 Event details (date, time, venue)
 Attendee information
@@ -67,6 +71,7 @@ Instructions for using the pass
 The QR code contains essential registration information in a format that can be easily scanned by standard QR readers and Google Lens.
 
 ---------------------------------------- Installation and Setup --------------------------------------
+
 Clone the repository: git clone https://github.com/AnkitaLomte26/Event-Pass-Generation-And-Verification-System.git
 Navigate to the project directory
 Build the project: mvn clean install
@@ -77,6 +82,7 @@ Mobile Access
 The application can be accessed from any device with an internet connection by visiting the deployed URL. For local development, the application can be accessed from mobile devices on the same network using the server's IP address.
 
 ------------------------------------------ Security Considerations --------------------------------------
+
 User passwords are securely hashed before storage
 Form validation prevents common security issues
 Session management ensures users can only access their own data
